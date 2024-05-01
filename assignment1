@@ -1,0 +1,157 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define tab 57
+
+class SymbolInfo
+{
+
+    string symb;
+    string type;
+
+public:
+    SymbolInfo(string symb = "NULL", string type = "NULL") : symb(symb), type(type) {}
+
+    void setSymbol(string symb)
+    {
+        this->symb = symb;
+    }
+    void setSymboltype(string type)
+    {
+        this->type = type;
+    }
+    string getSymbol()
+    {
+        return symb;
+    }
+    string getType()
+    {
+        return type;
+    }
+};
+
+class SymbolTable
+{
+
+    vector<SymbolInfo> Table[tab];
+
+public:
+    int Hash(string symb)
+    {
+        return (int(symb[0]) * 52) % tab;
+    }
+
+    void Insert(string symb, string type, ofstream &output)
+    {
+
+        SymbolInfo obj = SymbolInfo(symb, type);
+        int index = Hash(symb);
+        int pos = Table[index].size();
+        for (auto i : Table[index])
+        {
+            if (i.getSymbol() == symb)
+            {
+                output << "This symbol is already here" << endl;
+                cout << "This symbol is already here" << endl;
+                return;
+            }
+        }
+        Table[index].push_back(obj);
+        output << "Inserted at position " << index << "," << pos << endl;
+        cout << "Inserted at position " << index << "," << pos << endl;
+    }
+
+    void LookUp(string symb, ofstream &output)
+    {
+        int index = Hash(symb);
+        int col = 0;
+        for (auto obj : Table[index])
+        {
+            if (obj.getSymbol() == symb)
+            {
+                output << "Found at " << index << "," << col << endl;
+                cout << "Found at " << index << "," << col << endl;
+                return;
+            }
+            col++;
+        }
+        output << "Symbol is not there" << endl;
+        cout << "Symbol is not there" << endl;
+    }
+
+    void Delete(string symb, ofstream &output)
+    {
+        int index = Hash(symb);
+        int col = 0;
+        for (auto obj = Table[index].begin(); obj != Table[index].end(); obj++)
+        {
+            if (obj->getSymbol() == symb)
+            {
+                output << "Deleted from " << index << " , " << col << endl;
+                cout << "Deleted from " << index << " , " << col << endl;
+                Table[index].erase(obj);
+                return;
+            }
+        }
+        output << "Symbol is not present" << endl;
+        cout << "Symbol is not present" << endl;
+    }
+
+    void Print(ofstream &output)
+    {
+        for (int i = 0; i < tab; i++)
+        {
+            output << i << "->";
+            cout << i << "->";
+            for (int j = 0; j < Table[i].size(); j++)
+            {
+                output << "<" << Table[i][j].getSymbol() << "," << Table[i][j].getType() << ">"
+                       << " ";
+                cout << "<" << Table[i][j].getSymbol() << "," << Table[i][j].getType() << ">"
+                     << " ";
+            }
+            output << endl;
+            cout << endl;
+        }
+    }
+};
+int main()
+{
+
+    SymbolTable obj;
+
+    string ins, symb, typ;
+    ifstream file;
+    ofstream outfile;
+    outfile.open("output.txt");
+    file.open("in.txt");
+    if (file.is_open())
+    {
+        while (file >> ins)
+        {
+            if (ins == "I")
+            {
+                file >> symb >> typ;
+                obj.Insert(symb, typ, outfile);
+            }
+
+            else if (ins == "P")
+            {
+                obj.Print(outfile);
+            }
+            else if (ins == "L")
+            {
+                file >> symb;
+                obj.LookUp(symb, outfile);
+            }
+            else if (ins == "D")
+            {
+                file >> ins;
+                obj.Delete(symb, outfile);
+            }
+        }
+    }
+
+
+
+    return 0;
+}
