@@ -1,0 +1,673 @@
+Terminals unused in grammar
+
+   LTHIRD
+   RTHIRD
+   FLOAT
+   RELOP
+   NOT
+   ERROR
+   INCOP
+
+
+State 49 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: prog $end
+
+    1 prog: MAIN LPAREN RPAREN LCURL stmt_list RCURL
+
+    2 stmt_list: stmt stmt_list
+    3          | /* empty */
+
+    4 stmt: var_decl SEMICOLON
+    5     | expr_decl SEMICOLON
+    6     | expr SEMICOLON
+    7     | if_stmt
+    8     | NEWLINE
+
+    9 var_decl: type_spec decl_list
+
+   10 type_spec: KEYWORD
+
+   11 decl_list: term
+   12          | term ASSIGNOP expr
+   13          | term COMMA decl_list
+
+   14 expr: CONST_INT
+   15     | CONST_FLOAT
+   16     | expr ADDOP expr
+   17     | expr SUBOP expr
+   18     | expr MULOP expr
+   19     | expr DIVOP expr
+   20     | LPAREN expr RPAREN
+   21     | term
+
+   22 term: ID
+
+   23 expr_decl: term ASSIGNOP expr
+
+   24 if_stmt: IF LPAREN expr RPAREN stmt
+   25        | IF LPAREN expr RPAREN stmt ELSE stmt
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+NEWLINE (258) 8
+ID (259) 22
+LTHIRD (260)
+RTHIRD (261)
+COMMA (262) 13
+KEYWORD (263) 10
+SEMICOLON (264) 4 5 6
+CONST_INT (265) 14
+FLOAT (266)
+LPAREN (267) 1 20 24 25
+RPAREN (268) 1 20 24 25
+LCURL (269) 1
+RCURL (270) 1
+MAIN (271) 1
+RELOP (272)
+NOT (273)
+CONST_FLOAT (274) 15
+ERROR (275)
+ASSIGNOP (276) 12 23
+IF (277) 24 25
+ELSE (278) 25
+SUBOP (279) 17
+ADDOP (280) 16
+DIVOP (281) 19
+MULOP (282) 18
+INCOP (283)
+
+
+Nonterminals, with rules where they appear
+
+$accept (29)
+    on left: 0
+prog (30)
+    on left: 1, on right: 0
+stmt_list (31)
+    on left: 2 3, on right: 1 2
+stmt (32)
+    on left: 4 5 6 7 8, on right: 2 24 25
+var_decl (33)
+    on left: 9, on right: 4
+type_spec (34)
+    on left: 10, on right: 9
+decl_list (35)
+    on left: 11 12 13, on right: 9 13
+expr (36)
+    on left: 14 15 16 17 18 19 20 21, on right: 6 12 16 17 18 19 20
+    23 24 25
+term (37)
+    on left: 22, on right: 11 12 13 21 23
+expr_decl (38)
+    on left: 23, on right: 5
+if_stmt (39)
+    on left: 24 25, on right: 7
+
+
+state 0
+
+    0 $accept: . prog $end
+
+    MAIN  shift, and go to state 1
+
+    prog  go to state 2
+
+
+state 1
+
+    1 prog: MAIN . LPAREN RPAREN LCURL stmt_list RCURL
+
+    LPAREN  shift, and go to state 3
+
+
+state 2
+
+    0 $accept: prog . $end
+
+    $end  shift, and go to state 4
+
+
+state 3
+
+    1 prog: MAIN LPAREN . RPAREN LCURL stmt_list RCURL
+
+    RPAREN  shift, and go to state 5
+
+
+state 4
+
+    0 $accept: prog $end .
+
+    $default  accept
+
+
+state 5
+
+    1 prog: MAIN LPAREN RPAREN . LCURL stmt_list RCURL
+
+    LCURL  shift, and go to state 6
+
+
+state 6
+
+    1 prog: MAIN LPAREN RPAREN LCURL . stmt_list RCURL
+
+    NEWLINE      shift, and go to state 7
+    ID           shift, and go to state 8
+    KEYWORD      shift, and go to state 9
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+    IF           shift, and go to state 13
+
+    $default  reduce using rule 3 (stmt_list)
+
+    stmt_list  go to state 14
+    stmt       go to state 15
+    var_decl   go to state 16
+    type_spec  go to state 17
+    expr       go to state 18
+    term       go to state 19
+    expr_decl  go to state 20
+    if_stmt    go to state 21
+
+
+state 7
+
+    8 stmt: NEWLINE .
+
+    $default  reduce using rule 8 (stmt)
+
+
+state 8
+
+   22 term: ID .
+
+    $default  reduce using rule 22 (term)
+
+
+state 9
+
+   10 type_spec: KEYWORD .
+
+    $default  reduce using rule 10 (type_spec)
+
+
+state 10
+
+   14 expr: CONST_INT .
+
+    $default  reduce using rule 14 (expr)
+
+
+state 11
+
+   20 expr: LPAREN . expr RPAREN
+
+    ID           shift, and go to state 8
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+
+    expr  go to state 22
+    term  go to state 23
+
+
+state 12
+
+   15 expr: CONST_FLOAT .
+
+    $default  reduce using rule 15 (expr)
+
+
+state 13
+
+   24 if_stmt: IF . LPAREN expr RPAREN stmt
+   25        | IF . LPAREN expr RPAREN stmt ELSE stmt
+
+    LPAREN  shift, and go to state 24
+
+
+state 14
+
+    1 prog: MAIN LPAREN RPAREN LCURL stmt_list . RCURL
+
+    RCURL  shift, and go to state 25
+
+
+state 15
+
+    2 stmt_list: stmt . stmt_list
+
+    NEWLINE      shift, and go to state 7
+    ID           shift, and go to state 8
+    KEYWORD      shift, and go to state 9
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+    IF           shift, and go to state 13
+
+    $default  reduce using rule 3 (stmt_list)
+
+    stmt_list  go to state 26
+    stmt       go to state 15
+    var_decl   go to state 16
+    type_spec  go to state 17
+    expr       go to state 18
+    term       go to state 19
+    expr_decl  go to state 20
+    if_stmt    go to state 21
+
+
+state 16
+
+    4 stmt: var_decl . SEMICOLON
+
+    SEMICOLON  shift, and go to state 27
+
+
+state 17
+
+    9 var_decl: type_spec . decl_list
+
+    ID  shift, and go to state 8
+
+    decl_list  go to state 28
+    term       go to state 29
+
+
+state 18
+
+    6 stmt: expr . SEMICOLON
+   16 expr: expr . ADDOP expr
+   17     | expr . SUBOP expr
+   18     | expr . MULOP expr
+   19     | expr . DIVOP expr
+
+    SEMICOLON  shift, and go to state 30
+    SUBOP      shift, and go to state 31
+    ADDOP      shift, and go to state 32
+    DIVOP      shift, and go to state 33
+    MULOP      shift, and go to state 34
+
+
+state 19
+
+   21 expr: term .
+   23 expr_decl: term . ASSIGNOP expr
+
+    ASSIGNOP  shift, and go to state 35
+
+    $default  reduce using rule 21 (expr)
+
+
+state 20
+
+    5 stmt: expr_decl . SEMICOLON
+
+    SEMICOLON  shift, and go to state 36
+
+
+state 21
+
+    7 stmt: if_stmt .
+
+    $default  reduce using rule 7 (stmt)
+
+
+state 22
+
+   16 expr: expr . ADDOP expr
+   17     | expr . SUBOP expr
+   18     | expr . MULOP expr
+   19     | expr . DIVOP expr
+   20     | LPAREN expr . RPAREN
+
+    RPAREN  shift, and go to state 37
+    SUBOP   shift, and go to state 31
+    ADDOP   shift, and go to state 32
+    DIVOP   shift, and go to state 33
+    MULOP   shift, and go to state 34
+
+
+state 23
+
+   21 expr: term .
+
+    $default  reduce using rule 21 (expr)
+
+
+state 24
+
+   24 if_stmt: IF LPAREN . expr RPAREN stmt
+   25        | IF LPAREN . expr RPAREN stmt ELSE stmt
+
+    ID           shift, and go to state 8
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+
+    expr  go to state 38
+    term  go to state 23
+
+
+state 25
+
+    1 prog: MAIN LPAREN RPAREN LCURL stmt_list RCURL .
+
+    $default  reduce using rule 1 (prog)
+
+
+state 26
+
+    2 stmt_list: stmt stmt_list .
+
+    $default  reduce using rule 2 (stmt_list)
+
+
+state 27
+
+    4 stmt: var_decl SEMICOLON .
+
+    $default  reduce using rule 4 (stmt)
+
+
+state 28
+
+    9 var_decl: type_spec decl_list .
+
+    $default  reduce using rule 9 (var_decl)
+
+
+state 29
+
+   11 decl_list: term .
+   12          | term . ASSIGNOP expr
+   13          | term . COMMA decl_list
+
+    COMMA     shift, and go to state 39
+    ASSIGNOP  shift, and go to state 40
+
+    $default  reduce using rule 11 (decl_list)
+
+
+state 30
+
+    6 stmt: expr SEMICOLON .
+
+    $default  reduce using rule 6 (stmt)
+
+
+state 31
+
+   17 expr: expr SUBOP . expr
+
+    ID           shift, and go to state 8
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+
+    expr  go to state 41
+    term  go to state 23
+
+
+state 32
+
+   16 expr: expr ADDOP . expr
+
+    ID           shift, and go to state 8
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+
+    expr  go to state 42
+    term  go to state 23
+
+
+state 33
+
+   19 expr: expr DIVOP . expr
+
+    ID           shift, and go to state 8
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+
+    expr  go to state 43
+    term  go to state 23
+
+
+state 34
+
+   18 expr: expr MULOP . expr
+
+    ID           shift, and go to state 8
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+
+    expr  go to state 44
+    term  go to state 23
+
+
+state 35
+
+   23 expr_decl: term ASSIGNOP . expr
+
+    ID           shift, and go to state 8
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+
+    expr  go to state 45
+    term  go to state 23
+
+
+state 36
+
+    5 stmt: expr_decl SEMICOLON .
+
+    $default  reduce using rule 5 (stmt)
+
+
+state 37
+
+   20 expr: LPAREN expr RPAREN .
+
+    $default  reduce using rule 20 (expr)
+
+
+state 38
+
+   16 expr: expr . ADDOP expr
+   17     | expr . SUBOP expr
+   18     | expr . MULOP expr
+   19     | expr . DIVOP expr
+   24 if_stmt: IF LPAREN expr . RPAREN stmt
+   25        | IF LPAREN expr . RPAREN stmt ELSE stmt
+
+    RPAREN  shift, and go to state 46
+    SUBOP   shift, and go to state 31
+    ADDOP   shift, and go to state 32
+    DIVOP   shift, and go to state 33
+    MULOP   shift, and go to state 34
+
+
+state 39
+
+   13 decl_list: term COMMA . decl_list
+
+    ID  shift, and go to state 8
+
+    decl_list  go to state 47
+    term       go to state 29
+
+
+state 40
+
+   12 decl_list: term ASSIGNOP . expr
+
+    ID           shift, and go to state 8
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+
+    expr  go to state 48
+    term  go to state 23
+
+
+state 41
+
+   16 expr: expr . ADDOP expr
+   17     | expr . SUBOP expr
+   17     | expr SUBOP expr .
+   18     | expr . MULOP expr
+   19     | expr . DIVOP expr
+
+    DIVOP  shift, and go to state 33
+    MULOP  shift, and go to state 34
+
+    $default  reduce using rule 17 (expr)
+
+
+state 42
+
+   16 expr: expr . ADDOP expr
+   16     | expr ADDOP expr .
+   17     | expr . SUBOP expr
+   18     | expr . MULOP expr
+   19     | expr . DIVOP expr
+
+    DIVOP  shift, and go to state 33
+    MULOP  shift, and go to state 34
+
+    $default  reduce using rule 16 (expr)
+
+
+state 43
+
+   16 expr: expr . ADDOP expr
+   17     | expr . SUBOP expr
+   18     | expr . MULOP expr
+   19     | expr . DIVOP expr
+   19     | expr DIVOP expr .
+
+    $default  reduce using rule 19 (expr)
+
+
+state 44
+
+   16 expr: expr . ADDOP expr
+   17     | expr . SUBOP expr
+   18     | expr . MULOP expr
+   18     | expr MULOP expr .
+   19     | expr . DIVOP expr
+
+    $default  reduce using rule 18 (expr)
+
+
+state 45
+
+   16 expr: expr . ADDOP expr
+   17     | expr . SUBOP expr
+   18     | expr . MULOP expr
+   19     | expr . DIVOP expr
+   23 expr_decl: term ASSIGNOP expr .
+
+    SUBOP  shift, and go to state 31
+    ADDOP  shift, and go to state 32
+    DIVOP  shift, and go to state 33
+    MULOP  shift, and go to state 34
+
+    $default  reduce using rule 23 (expr_decl)
+
+
+state 46
+
+   24 if_stmt: IF LPAREN expr RPAREN . stmt
+   25        | IF LPAREN expr RPAREN . stmt ELSE stmt
+
+    NEWLINE      shift, and go to state 7
+    ID           shift, and go to state 8
+    KEYWORD      shift, and go to state 9
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+    IF           shift, and go to state 13
+
+    stmt       go to state 49
+    var_decl   go to state 16
+    type_spec  go to state 17
+    expr       go to state 18
+    term       go to state 19
+    expr_decl  go to state 20
+    if_stmt    go to state 21
+
+
+state 47
+
+   13 decl_list: term COMMA decl_list .
+
+    $default  reduce using rule 13 (decl_list)
+
+
+state 48
+
+   12 decl_list: term ASSIGNOP expr .
+   16 expr: expr . ADDOP expr
+   17     | expr . SUBOP expr
+   18     | expr . MULOP expr
+   19     | expr . DIVOP expr
+
+    SUBOP  shift, and go to state 31
+    ADDOP  shift, and go to state 32
+    DIVOP  shift, and go to state 33
+    MULOP  shift, and go to state 34
+
+    $default  reduce using rule 12 (decl_list)
+
+
+state 49
+
+   24 if_stmt: IF LPAREN expr RPAREN stmt .
+   25        | IF LPAREN expr RPAREN stmt . ELSE stmt
+
+    ELSE  shift, and go to state 50
+
+    ELSE      [reduce using rule 24 (if_stmt)]
+    $default  reduce using rule 24 (if_stmt)
+
+
+state 50
+
+   25 if_stmt: IF LPAREN expr RPAREN stmt ELSE . stmt
+
+    NEWLINE      shift, and go to state 7
+    ID           shift, and go to state 8
+    KEYWORD      shift, and go to state 9
+    CONST_INT    shift, and go to state 10
+    LPAREN       shift, and go to state 11
+    CONST_FLOAT  shift, and go to state 12
+    IF           shift, and go to state 13
+
+    stmt       go to state 51
+    var_decl   go to state 16
+    type_spec  go to state 17
+    expr       go to state 18
+    term       go to state 19
+    expr_decl  go to state 20
+    if_stmt    go to state 21
+
+
+state 51
+
+   25 if_stmt: IF LPAREN expr RPAREN stmt ELSE stmt .
+
+    $default  reduce using rule 25 (if_stmt)
