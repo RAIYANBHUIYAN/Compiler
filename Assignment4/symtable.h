@@ -8,41 +8,27 @@ class SymbolInfo
     string symbol, symbolType;
 
 public:
-    string code = "";
+   string code = "";
     SymbolInfo() {}
-    SymbolInfo(string symbol, string symbolType)
-    {
-        this->symbol = symbol;
-        this->symbolType = symbolType;
-    }
-    string getSymbol()
-    {
+    SymbolInfo(string symbol, string symbolType) : symbol(symbol), symbolType(symbolType) {}
+
+    string getSymbol() const {
         return symbol;
     }
-    string getSymbolType()
-    {
+    string getSymbolType() const {
         return symbolType;
     }
-    void setSymbol(string symbol)
-    {
+    void setSymbol(const string &symbol) {
         this->symbol = symbol;
     }
-    void setSymbolType(string symbolType)
-    {
+    void setSymbolType(const string &symbolType) {
         this->symbolType = symbolType;
     }
-    void concatCode(string s, string s1)
-    {
-        code += s;
-        code += s1;
-        code += "\n";
+    void concatCode(const string &s, const string &s1) {
+        code += s + s1 + "\n";
     }
-    void concatCode(string s, string s1, string s2)
-    {
-        code += s;
-        code += s1;
-        code += s2;
-        code += "\n";
+    void concatCode(const string &s, const string &s1, const string &s2) {
+        code += s + s1 + s2 + "\n";
     }
 };
 
@@ -57,7 +43,7 @@ public:
     }
 
 
-    void insert(SymbolInfo sf)
+    void insert(SymbolInfo sf ,FILE *logFile)
     {
         string symbol = sf.getSymbol();
         string symbolType = sf.getSymbolType();
@@ -67,7 +53,7 @@ public:
         {
             if (x.getSymbol() == symbol)
             {
-                fprintf(stderr, "%s already exists in the symbol table\n", symbol.c_str());
+                fprintf(logFile, "%s already exists in the symbol table\n", symbol.c_str());
                 return;
             }
         }
@@ -82,22 +68,20 @@ public:
             if (x.getSymbol() == symbol)
                 return &x;
         }
-        return nullptr; // Return nullptr if symbol not found
+        return nullptr; 
     }
 
-    void print()
-    {
-        for (int i = 0; i < MOD; i++)
-        {
-            cout << i << "-->";
-            for (int j = 0; j < symTable[i].size(); j++)
-            {
-                cout << "<" << symTable[i][j].getSymbol() << "," << symTable[i][j].getSymbolType() << ">";
-            }
-            cout << endl;
+    void print(FILE *yyout) const {
+    for (int i = 0; i < MOD; i++) {
+        fprintf(yyout, "%d -->", i);
+        for (const auto &entry : symTable[i]) {
+            fprintf(yyout, "<%s,%s>", entry.getSymbol().c_str(), entry.getSymbolType().c_str());
         }
-        cout << endl;
+        fprintf(yyout, "\n");
     }
+    fprintf(yyout, "\n");
+}
+
 
     void asmVariableInitializer(FILE *ASM)
     {

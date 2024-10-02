@@ -1,0 +1,2 @@
+a already exists in the symbol table
+c already exists in the symbol table

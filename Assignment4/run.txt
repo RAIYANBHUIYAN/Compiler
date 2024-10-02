@@ -1,0 +1,4 @@
+flex lexer.l
+bison -d bison.y
+g++ -w lex.yy.c bison.tab.c
+a

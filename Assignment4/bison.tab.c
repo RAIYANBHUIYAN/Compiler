@@ -76,6 +76,7 @@
 #include <stdlib.h>
 #include "symtable.h"
 
+FILE *logFile;
 SymbolTable t;
 int yylex();
 
@@ -87,16 +88,21 @@ SymbolInfo si;
 
 void yyerror(const char* s) { printf("%s\n", s); }
 
-int t_count = 1; // Temp variable counter
+int t_count = 1;
+int label_count = 1;
 std::string new_Temp() {
     return "t" + std::to_string(t_count++);
+}
+
+std::string new_Label() {
+    return "L" + std::to_string(label_count++);
 }
 
 FILE *lg;
 
 
 /* Line 189 of yacc.c  */
-#line 100 "bison.tab.c"
+#line 106 "bison.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -167,7 +173,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 171 "bison.tab.c"
+#line 177 "bison.tab.c"
 
 #ifdef short
 # undef short
@@ -382,16 +388,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   67
+#define YYLAST   58
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  30
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  11
+#define YYNNTS  12
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  26
+#define YYNRULES  28
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  52
+#define YYNSTATES  55
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -440,30 +446,31 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,    10,    13,    14,    17,    20,    23,    25,
-      27,    30,    32,    34,    38,    42,    44,    46,    50,    54,
-      58,    62,    66,    68,    70,    74,    80
+      27,    30,    32,    34,    38,    42,    46,    50,    54,    56,
+      60,    64,    66,    68,    70,    74,    76,    80,    86
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
       31,     0,    -1,    16,    12,    13,    14,    32,    15,    -1,
-      33,    32,    -1,    -1,    34,     9,    -1,    39,     9,    -1,
-      37,     9,    -1,    40,    -1,     3,    -1,    35,    36,    -1,
+      33,    32,    -1,    -1,    34,     9,    -1,    40,     9,    -1,
+      37,     9,    -1,    41,    -1,     3,    -1,    35,    36,    -1,
        8,    -1,    38,    -1,    38,    21,    37,    -1,    38,     7,
-      36,    -1,    10,    -1,    19,    -1,    37,    25,    37,    -1,
-      37,    24,    37,    -1,    37,    27,    37,    -1,    37,    26,
-      37,    -1,    12,    37,    13,    -1,    38,    -1,     4,    -1,
-      38,    21,    37,    -1,    22,    12,    37,    13,    33,    -1,
-      22,    12,    37,    13,    33,    23,    33,    -1
+      36,    -1,    37,    25,    38,    -1,    37,    24,    38,    -1,
+      37,    17,    37,    -1,    38,    -1,    38,    27,    39,    -1,
+      38,    26,    39,    -1,    39,    -1,    10,    -1,    19,    -1,
+      12,    37,    13,    -1,     4,    -1,     4,    21,    37,    -1,
+      22,    12,    37,    13,    33,    -1,    22,    12,    37,    13,
+      33,    23,    33,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    41,    41,    51,    52,    56,    57,    58,    59,    60,
-      64,    68,    72,    73,    74,    78,    79,    80,    89,    98,
-     107,   116,   119,   123,   130,   138,   139
+       0,    47,    47,    57,    58,    62,    63,    64,    65,    66,
+      70,    74,    78,    79,    80,    84,    93,   102,   114,   118,
+     127,   136,   140,   141,   142,   145,   152,   160,   168
 };
 #endif
 
@@ -477,8 +484,8 @@ static const char *const yytname[] =
   "RPAREN", "LCURL", "RCURL", "MAIN", "RELOP", "NOT", "CONST_FLOAT",
   "ERROR", "ASSIGNOP", "IF", "ELSE", "SUBOP", "ADDOP", "DIVOP", "MULOP",
   "INCOP", "LOWER_THAN_ELSE", "$accept", "prog", "stmt_list", "stmt",
-  "var_decl", "type_spec", "decl_list", "expr", "term", "expr_decl",
-  "if_stmt", 0
+  "var_decl", "type_spec", "decl_list", "expr", "term", "factor",
+  "expr_decl", "if_stmt", 0
 };
 #endif
 
@@ -497,16 +504,16 @@ static const yytype_uint16 yytoknum[] =
 static const yytype_uint8 yyr1[] =
 {
        0,    30,    31,    32,    32,    33,    33,    33,    33,    33,
-      34,    35,    36,    36,    36,    37,    37,    37,    37,    37,
-      37,    37,    37,    38,    39,    40,    40
+      34,    35,    36,    36,    36,    37,    37,    37,    37,    38,
+      38,    38,    39,    39,    39,    39,    40,    41,    41
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     6,     2,     0,     2,     2,     2,     1,     1,
-       2,     1,     1,     3,     3,     1,     1,     3,     3,     3,
-       3,     3,     1,     1,     3,     5,     7
+       2,     1,     1,     3,     3,     3,     3,     3,     1,     3,
+       3,     1,     1,     1,     3,     1,     3,     5,     7
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -514,39 +521,39 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     0,     1,     0,     4,     9,    23,    11,
-      15,     0,    16,     0,     0,     4,     0,     0,     0,    22,
-       0,     8,     0,    22,     0,     2,     3,     5,    10,    12,
-       7,     0,     0,     0,     0,     0,     6,    21,     0,     0,
-       0,    18,    17,    20,    19,    24,     0,    14,    13,    25,
-       0,    26
+       0,     0,     0,     0,     1,     0,     4,     9,    25,    11,
+      22,     0,    23,     0,     0,     4,     0,     0,     0,    18,
+      21,     0,     8,     0,    25,     0,     0,     2,     3,     5,
+      10,    12,     7,     0,     0,     0,     0,     0,     6,    26,
+      24,     0,     0,     0,    17,    16,    15,    20,    19,     0,
+      14,    13,    27,     0,    28
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,    14,    15,    16,    17,    28,    18,    23,    20,
-      21
+      -1,     2,    14,    15,    16,    17,    30,    18,    19,    20,
+      21,    22
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -44
+#define YYPACT_NINF -47
 static const yytype_int8 yypact[] =
 {
-      -8,    -2,     6,     0,   -44,     1,    24,   -44,   -44,   -44,
-     -44,    35,   -44,     4,    14,    24,    22,    33,    -7,    20,
-      26,   -44,    25,   -44,    35,   -44,   -44,   -44,   -44,     5,
-     -44,    35,    35,    35,    35,    35,   -44,   -44,    40,    33,
-      35,   -22,   -22,   -44,   -44,    31,    24,   -44,    31,    19,
-      24,   -44
+     -10,    -8,    11,     1,   -47,    13,    27,   -47,    -5,   -47,
+     -47,    -2,   -47,    30,    29,    27,    45,    -2,    -4,     7,
+     -47,    46,   -47,    -2,   -47,    23,    -2,   -47,   -47,   -47,
+     -47,     2,   -47,    -2,    -2,    -2,    -2,    -2,   -47,    26,
+     -47,    28,    -2,    -2,    21,     7,     7,   -47,   -47,    27,
+     -47,    26,    33,    27,   -47
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -44,   -44,    44,   -43,   -44,   -44,     9,   -10,    -6,   -44,
-     -44
+     -47,   -47,    42,   -46,   -47,   -47,    16,   -11,   -16,   -12,
+     -47,   -47
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -554,26 +561,24 @@ static const yytype_int8 yypgoto[] =
    number is the opposite.  If zero, do what YYDEFACT says.
    If YYTABLE_NINF, syntax error.  */
 #define YYTABLE_NINF -1
-static const yytype_uint8 yytable[] =
+static const yytype_int8 yytable[] =
 {
-      19,    22,    30,    49,    33,    34,     4,    51,     1,    19,
-       3,    29,    39,     5,    38,     6,    24,    31,    32,    33,
-      34,    41,    42,    43,    44,    45,    40,     7,     8,    25,
-      48,    27,     9,    29,    10,    36,    11,     8,    37,     8,
-      19,    35,    50,    12,    19,    10,    13,    11,    47,    31,
-      32,    33,    34,    46,    12,    31,    32,    33,    34,    26,
-       0,     0,     0,     0,    31,    32,    33,    34
+      25,    31,    24,    52,     3,    32,     1,    54,    10,    42,
+      11,     4,    39,    33,     5,    41,    23,    12,    45,    46,
+      34,    35,    44,    43,    47,    48,    31,     6,    36,    37,
+       7,     8,    51,    36,    37,     9,    40,    10,    -1,    11,
+      33,    49,    26,    33,    27,    33,    12,    34,    35,    13,
+      34,    35,    34,    35,    29,    38,    53,    28,    50
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-       6,    11,     9,    46,    26,    27,     0,    50,    16,    15,
-      12,    17,     7,    13,    24,    14,    12,    24,    25,    26,
-      27,    31,    32,    33,    34,    35,    21,     3,     4,    15,
-      40,     9,     8,    39,    10,     9,    12,     4,    13,     4,
-      46,    21,    23,    19,    50,    10,    22,    12,    39,    24,
-      25,    26,    27,    13,    19,    24,    25,    26,    27,    15,
-      -1,    -1,    -1,    -1,    24,    25,    26,    27
+      11,    17,     4,    49,    12,     9,    16,    53,    10,     7,
+      12,     0,    23,    17,    13,    26,    21,    19,    34,    35,
+      24,    25,    33,    21,    36,    37,    42,    14,    26,    27,
+       3,     4,    43,    26,    27,     8,    13,    10,    17,    12,
+      17,    13,    12,    17,    15,    17,    19,    24,    25,    22,
+      24,    25,    24,    25,     9,     9,    23,    15,    42
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -582,10 +587,10 @@ static const yytype_uint8 yystos[] =
 {
        0,    16,    31,    12,     0,    13,    14,     3,     4,     8,
       10,    12,    19,    22,    32,    33,    34,    35,    37,    38,
-      39,    40,    37,    38,    12,    15,    32,     9,    36,    38,
-       9,    24,    25,    26,    27,    21,     9,    13,    37,     7,
-      21,    37,    37,    37,    37,    37,    13,    36,    37,    33,
-      23,    33
+      39,    40,    41,    21,     4,    37,    12,    15,    32,     9,
+      36,    38,     9,    17,    24,    25,    26,    27,     9,    37,
+      13,    37,     7,    21,    37,    38,    38,    39,    39,    13,
+      36,    37,    33,    23,    33
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1399,7 +1404,7 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 41 "bison.y"
+#line 47 "bison.y"
     {
         fprintf(ASM, ".MODEL SMALL\n.STACK 100H\n.DATA\n");
         t.asmVariableInitializer(ASM);
@@ -1412,111 +1417,162 @@ yyreduce:
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 78 "bison.y"
-    { (yyval) = yylval; ;}
+#line 84 "bison.y"
+    {
+        std::string temp = new_Temp();
+        (yyval) = SymbolInfo(temp, "");
+        of << (yyval).getSymbol() << " = " << (yyvsp[(1) - (3)]).getSymbol() << " + " << (yyvsp[(3) - (3)]).getSymbol() << endl;
+        si.concatCode("MOV ", " AX, ", (yyvsp[(1) - (3)]).getSymbol());
+        si.concatCode("MOV ", " BX, ", (yyvsp[(3) - (3)]).getSymbol());
+        si.concatCode("ADD ", " AX, ", " BX ");
+        si.concatCode("MOV ", (yyval).getSymbol(), " , AX");
+    ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 79 "bison.y"
-    { (yyval) = yylval; ;}
+#line 93 "bison.y"
+    {
+        std::string temp = new_Temp();
+        (yyval) = SymbolInfo(temp, "");
+        of << (yyval).getSymbol() << " = " << (yyvsp[(1) - (3)]).getSymbol() << " - " << (yyvsp[(3) - (3)]).getSymbol() << endl;
+        si.concatCode("MOV ", " AX, ", (yyvsp[(1) - (3)]).getSymbol());
+        si.concatCode("MOV ", " BX, ", (yyvsp[(3) - (3)]).getSymbol());
+        si.concatCode("SUB ", " AX, ", " BX ");
+        si.concatCode("MOV ", (yyval).getSymbol(), " , AX");
+    ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 80 "bison.y"
+#line 102 "bison.y"
     {
         std::string temp = new_Temp();
         (yyval) = SymbolInfo(temp, "");
-        of << (yyval).getSymbol() << " = " << (yyvsp[(1) - (3)]).getSymbol() << " + " << (yyvsp[(3) - (3)]).getSymbol() << endl;
-        si.concatCode("MOV ", "AL", (yyvsp[(1) - (3)]).getSymbol());
-        si.concatCode("MOV", "BL", (yyvsp[(3) - (3)]).getSymbol());
-        si.concatCode("ADD", "AL", "BL");
-        si.concatCode("MOV", (yyval).getSymbol(), "AL");
-    ;}
-    break;
-
-  case 18:
-
-/* Line 1455 of yacc.c  */
-#line 89 "bison.y"
-    {
-        std::string temp = new_Temp();
-        (yyval) = SymbolInfo(temp, "");
-        of << (yyval).getSymbol() << " = " << (yyvsp[(1) - (3)]).getSymbol() << " - " << (yyvsp[(3) - (3)]).getSymbol() << endl;
-        si.concatCode("MOV", "AL", (yyvsp[(1) - (3)]).getSymbol());
-        si.concatCode("MOV", "BL", (yyvsp[(3) - (3)]).getSymbol());
-        si.concatCode("SUB", "AL", "BL");
-        si.concatCode("MOV", (yyval).getSymbol(), "AL");
+        of << (yyval).getSymbol() << " = " << (yyvsp[(1) - (3)]).getSymbol() << " " << (yyvsp[(2) - (3)]).getSymbol() << " " << (yyvsp[(3) - (3)]).getSymbol() << endl;
+        si.concatCode("CMP ", (yyvsp[(1) - (3)]).getSymbol(), (yyvsp[(3) - (3)]).getSymbol());
+        if (strcmp((yyvsp[(2) - (3)]).getSymbol().c_str(), "==") == 0) si.concatCode("JE ", temp);
+        else if (strcmp((yyvsp[(2) - (3)]).getSymbol().c_str(), "!=") == 0) si.concatCode("JNE ", temp);
+        else if (strcmp((yyvsp[(2) - (3)]).getSymbol().c_str(), ">") == 0) si.concatCode("JG ", temp);
+        else if (strcmp((yyvsp[(2) - (3)]).getSymbol().c_str(), "<") == 0) si.concatCode("JL ", temp);
+        else if (strcmp((yyvsp[(2) - (3)]).getSymbol().c_str(), ">=") == 0) si.concatCode("JGE ", temp);
+        else if (strcmp((yyvsp[(2) - (3)]).getSymbol().c_str(), "<=") == 0) si.concatCode("JLE ", temp);
     ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 98 "bison.y"
+#line 118 "bison.y"
     {
         std::string temp = new_Temp();
         (yyval) = SymbolInfo(temp, "");
         of << (yyval).getSymbol() << " = " << (yyvsp[(1) - (3)]).getSymbol() << " * " << (yyvsp[(3) - (3)]).getSymbol() << endl;
-        si.concatCode("MOV", "AL", (yyvsp[(1) - (3)]).getSymbol());
-        si.concatCode("MOV", "BL", (yyvsp[(3) - (3)]).getSymbol());
-        si.concatCode("MUL", "BL");
-        si.concatCode("MOV", (yyval).getSymbol(), "AL");
+        si.concatCode("MOV ", " AX, ", (yyvsp[(1) - (3)]).getSymbol());
+        si.concatCode("MOV ", " BX, ", (yyvsp[(3) - (3)]).getSymbol());
+        si.concatCode("MUL ", " BX ");
+        si.concatCode("MOV ", (yyval).getSymbol(), " , AX ");
     ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 107 "bison.y"
+#line 127 "bison.y"
     {
         std::string temp = new_Temp();
         (yyval) = SymbolInfo(temp, "");
         of << (yyval).getSymbol() << " = " << (yyvsp[(1) - (3)]).getSymbol() << " / " << (yyvsp[(3) - (3)]).getSymbol() << endl;
-        si.concatCode("MOV", "AL", (yyvsp[(1) - (3)]).getSymbol());
-        si.concatCode("MOV", "BL", (yyvsp[(3) - (3)]).getSymbol());
-        si.concatCode("DIV", "BL");
-        si.concatCode("MOV", (yyval).getSymbol(), "AL");
+        si.concatCode("MOV ", " AX, ", (yyvsp[(1) - (3)]).getSymbol());
+        si.concatCode("MOV ", " BX, ", (yyvsp[(3) - (3)]).getSymbol());
+        si.concatCode("DIV ", " BX ");
+        si.concatCode("MOV ", (yyval).getSymbol(), " , AX");
     ;}
     break;
 
-  case 21:
+  case 22:
 
 /* Line 1455 of yacc.c  */
-#line 116 "bison.y"
-    {
-        (yyval) = (yyvsp[(2) - (3)]);
-    ;}
+#line 140 "bison.y"
+    { (yyval) = yylval; ;}
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 123 "bison.y"
-    {
-        (yyval) = SymbolInfo((yyvsp[(1) - (1)]).getSymbol(), "ID");
-        t.insert((yyval));
-    ;}
+#line 141 "bison.y"
+    { (yyval) = yylval; ;}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 130 "bison.y"
+#line 142 "bison.y"
+    {
+        (yyval) = (yyvsp[(2) - (3)]);
+    ;}
+    break;
+
+  case 25:
+
+/* Line 1455 of yacc.c  */
+#line 145 "bison.y"
+    {
+        (yyval) = SymbolInfo((yyvsp[(1) - (1)]).getSymbol(), "ID");
+        t.insert((yyval), logFile);  
+    ;}
+    break;
+
+  case 26:
+
+/* Line 1455 of yacc.c  */
+#line 152 "bison.y"
     {
         of << (yyvsp[(1) - (3)]).getSymbol() << " = " << (yyvsp[(3) - (3)]).getSymbol() << endl;
-        si.concatCode("MOV", "AL", (yyvsp[(3) - (3)]).getSymbol());
-        si.concatCode("MOV", (yyvsp[(1) - (3)]).getSymbol(), ", AL");
+        si.concatCode("MOV ", " AX, ", (yyvsp[(3) - (3)]).getSymbol());
+        si.concatCode("MOV ", (yyvsp[(1) - (3)]).getSymbol(), " , AX");
+    ;}
+    break;
+
+  case 27:
+
+/* Line 1455 of yacc.c  */
+#line 160 "bison.y"
+    {
+        std::string label = new_Label();
+        of << "IF " << (yyvsp[(3) - (5)]).getSymbol() << " == 0 GOTO " << label << endl;
+        si.concatCode("CMP ", (yyvsp[(3) - (5)]).getSymbol(), " 0");
+        si.concatCode("JE ", label);
+        of << label << ":\n";
+        fprintf(ASM, "%s:\n", label.c_str());
+    ;}
+    break;
+
+  case 28:
+
+/* Line 1455 of yacc.c  */
+#line 168 "bison.y"
+    {
+        std::string label1 = new_Label();
+        std::string label2 = new_Label();
+        of << "IF " << (yyvsp[(3) - (7)]).getSymbol() << " == 0 GOTO " << label1 << endl;
+        si.concatCode("CMP ", (yyvsp[(3) - (7)]).getSymbol(), " 0");
+        si.concatCode("JE ", label1);
+        of << "GOTO " << label2 << endl;
+        si.concatCode("JMP ", label2);
+        of << label1 << ":\n";
+        fprintf(ASM, "%s:\n", label1.c_str());
+        of << label2 << ":\n";
+        fprintf(ASM, "%s:\n", label2.c_str());
     ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1520 "bison.tab.c"
+#line 1576 "bison.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1728,7 +1784,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 142 "bison.y"
+#line 183 "bison.y"
 
 
 int main() {
@@ -1737,25 +1793,34 @@ int main() {
         perror("Failed to open code.asm");
         return 1;
     }
+
     yyin = fopen("input.txt", "r");
     if (!yyin) {
         perror("Failed to open input.txt");
         return 1;
     }
-    yyout = fopen("log_error.txt", "w");
+
+    yyout = fopen("table.txt", "w");
     if (!yyout) {
-        perror("Failed to open log_error.txt");
+        perror("Failed to open table.txt");
         return 1;
     }
-    lg = fopen("log.txt", "w");
-    if (!lg) {
+
+    logFile = fopen("log.txt", "w");
+    if (!logFile) {
         perror("Failed to open log.txt");
         return 1;
     }
-    yyparse();
+
+    yyparse(); 
+    t. print(yyout);
+
     fclose(yyin);
     fclose(yyout);
-    fclose(lg);
     fclose(ASM);
+    fclose(logFile);  
+    of.close();  
+
+    return 0;
 }
 

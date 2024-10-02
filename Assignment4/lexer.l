@@ -44,17 +44,19 @@ const_float   ({digit}+)?(\.)?{digit}+[eE]?[+-]?{digit}+
 %%
 
 "main"            { return MAIN; }
+"if"              { return IF; }
+"else"            { return ELSE; }
 "int"|"float"|"char" { return KEYWORD; }
 
-{delimeter}       { /* Ignore whitespace */ }
+{delimeter}       { }
 {newline}         { return NEWLINE; }
 
 {addop}           { return ADDOP; }
 {subop}           { return SUBOP; }
 {mulop}           { return MULOP; }
 {incop}           { return INCOP; }
-{relop}           { return RELOP; }    /* Added */
-{not}             { return NOT; }      /* Added */
+{relop}           { return RELOP; }    
+{not}             { return NOT; }     
 {assignop}        { return ASSIGNOP; }
 {lparen}          { return LPAREN; }
 {rparen}          { return RPAREN; }
@@ -72,7 +74,7 @@ const_float   ({digit}+)?(\.)?{digit}+[eE]?[+-]?{digit}+
     return CONST_INT;
 }
 
-{const_float} {  /* Added for handling floating-point constants */
+{const_float} {  
     SymbolInfo ob(string(yytext), "CONST_FLOAT");
     yylval = ob;
     return CONST_FLOAT;
@@ -89,4 +91,3 @@ const_float   ({digit}+)?(\.)?{digit}+[eE]?[+-]?{digit}+
     return ERROR;
 }
 %%
-
